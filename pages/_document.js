@@ -2,14 +2,15 @@
 import React from "react";
 import Document, { Html, Head, Main, NextScript } from "next/document";
 import { ServerStyleSheets } from "@material-ui/core/styles";
+import { prefix } from "../utils";
 
 export default class MyDocument extends Document {
   render() {
     return (
       <Html lang="zh_en">
         <Head>
-          <link rel="stylesheet" href="/fonts/Inter/Inter.css" />
-          <link rel="stylesheet" href="/fonts/Druk/Druk.css" />
+          <link rel="stylesheet" href={`${prefix}/fonts/Inter/Inter.css`} />
+          <link rel="stylesheet" href={`${prefix}/fonts/Druk/Druk.css`} />
         </Head>
         <body>
           <Main />

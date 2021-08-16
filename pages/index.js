@@ -223,7 +223,7 @@ function Home({ changeTheme, theme }) {
               {resData.map((chain, idx) => (
                 <Chain chain={chain} key={idx} />
               ))}
-              {isLoading && <Grid alignItems="center">加载中...</Grid>}
+              {isLoading && <div>加载中...</div>}
             </div>
           </div>
         </div>
