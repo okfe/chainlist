@@ -110,10 +110,6 @@ function Home({ changeTheme, theme }) {
     }
   };
 
-  const addNetwork = () => {
-    window.open("https://github.com/ethereum-lists/chains", "_blank");
-  };
-
   const closeMultichain = (perma) => {
     setHideMultichain("1");
     localStorage.setItem("chainlist.org-hideMultichain", perma ? "1" : "0");
@@ -149,11 +145,18 @@ function Home({ changeTheme, theme }) {
       .slice(0, 100);
   }, [data, search]);
 
+  const isLoading = !error && !data;
+
   return (
     <div className={styles.container}>
       <Head>
         <title>Chainlist工具</title>
-        <link rel="icon" href="/favicon.png" />
+        <meta name="google" content="notranslate" />
+        <link
+          rel="shortcut icon"
+          href="https://static.okex.com/cdn/assets/imgs/MjAxODg/D91A7323087D31A588E0D2A379DD7747.png"
+          type="image/png"
+        ></link>
       </Head>
 
       <main className={styles.main}>
@@ -210,13 +213,17 @@ function Home({ changeTheme, theme }) {
               </div>
               <Header changeTheme={changeTheme} />
             </div>
-            <div className={classes.cardsContainer}>
-              {/* {hideMultichain === "0" && (
-                <MultiChain closeMultichain={closeMultichain} />
-              )} */}
+            <div
+              className={
+                isLoading
+                  ? classes.cardsContainerLoading
+                  : classes.cardsContainer
+              }
+            >
               {resData.map((chain, idx) => (
                 <Chain chain={chain} key={idx} />
               ))}
+              {isLoading && <Grid alignItems="center">加载中...</Grid>}
             </div>
           </div>
         </div>

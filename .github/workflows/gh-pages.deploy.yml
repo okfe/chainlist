@@ -28,6 +28,8 @@ jobs:
 
       - name: Build project
         run: npm run build
+        env: 
+          NEXT_PUBLIC_BASE_PATH: "/chainlist"
 
       - name: Export static files
         run: npm run export

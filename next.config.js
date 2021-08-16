@@ -1,6 +1,5 @@
 module.exports = {
-  reactStrictMode: true,
-  basePath: "/chainlist",
-  assetPrefix: "/chainlist",
-  exportPathMap: "./pages",
+  basePath: process.env.NEXT_PUBLIC_BASE_PATH,
+  assetPrefix: process.env.NEXT_PUBLIC_BASE_PATH,
+  // exportPathMap: "./pages",
 };

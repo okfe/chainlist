@@ -7,7 +7,7 @@ import Web3 from "web3";
 import classes from "./chain.module.css";
 
 import stores from "../../stores/index.js";
-import { getProvider } from "../../utils";
+import { getProvider, prefix } from "../../utils";
 
 import {
   ERROR,
@@ -100,10 +100,10 @@ export default function Chain({ chain }) {
     <Paper elevation={1} className={classes.chainContainer} key={chain.chainId}>
       <div className={classes.chainNameContainer}>
         <img
-          src="/connectors/icn-asd.svg"
+          src={prefix + "/connectors/icn-asd.svg"}
           onError={(e) => {
             e.target.onerror = null;
-            e.target.src = "/chains/unknown-logo.png";
+            e.target.src = `${prefix}/chains/unknown-logo.png`;
           }}
           width={28}
           height={28}
