@@ -44,12 +44,28 @@ export function bnDec(decimals) {
 }
 
 export function getProvider() {
-  if (typeof window !== "undefined" && typeof window.ethereum !== "undefined") {
+  if (
+    typeof window !== "undefined" &&
+    typeof window.okexchain !== "undefined"
+  ) {
     if (window.okexchain.isOKExWallet) return "OKEx";
-    if (window.ethereum.isMetaMask) return "Metamask";
-    // if (window.ethereum.isImToken) return "imToken";
   }
   return "Wallet";
 }
 
 export const prefix = process.env.NEXT_PUBLIC_BASE_PATH || "";
+
+export function whatBrowser() {
+  const agent = navigator.userAgent.toLowerCase();
+  if (agent.indexOf("chrome") > 0) {
+    return "chrome";
+  }
+  if (agent.indexOf("firefox") > 0) {
+    return "firefox";
+  }
+  if (agent.indexOf("trident") > 0) {
+    return "ie";
+  }
+
+  return "chrome";
+}

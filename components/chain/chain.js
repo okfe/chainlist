@@ -63,14 +63,14 @@ export default function Chain({ chain }) {
       ],
     };
 
-    window.web3.eth.getAccounts((error, accounts) => {
-      window.ethereum
+    window.okexchain.requestAccounts().then((accounts) => {
+      window.okexchain
         .request({
           method: "wallet_addEthereumChain",
           params: [params, accounts[0]],
         })
         .then((result) => {
-          console.log(result);
+          console.log("addToNetwork", result);
         })
         .catch((error) => {
           stores.emitter.emit(ERROR, error.message ? error.message : error);
@@ -83,8 +83,6 @@ export default function Chain({ chain }) {
     if (account && account.address) {
       const providerTextList = {
         OKEx: "添加到OKEx",
-        Metamask: "添加到Metamask",
-        Wallet: "添加到钱包",
       };
       return providerTextList[getProvider()];
     } else {
@@ -100,7 +98,7 @@ export default function Chain({ chain }) {
     <Paper elevation={1} className={classes.chainContainer} key={chain.chainId}>
       <div className={classes.chainNameContainer}>
         <img
-          src={prefix + "/connectors/icn-asd.svg"}
+          src={`${prefix}/chains/unknown-logo.png`}
           onError={(e) => {
             e.target.onerror = null;
             e.target.src = `${prefix}/chains/unknown-logo.png`;

@@ -17,7 +17,7 @@ import {
 // import Unlock from '../unlock'
 
 import stores from "../../stores";
-import { formatAddress, getProvider } from "../../utils";
+import { formatAddress, getProvider, prefix } from "../../utils";
 
 import classes from "./header.module.css";
 
@@ -86,7 +86,6 @@ function Header(props) {
       setAccount(accountStore);
     };
     const connectWallet = () => {
-      onAddressClicked();
       stores.dispatcher.dispatch({ type: TRY_CONNECT_WALLET });
     };
 
@@ -114,8 +113,6 @@ function Header(props) {
   const renderProviderLogo = () => {
     const providerLogoList = {
       OKEx: "OKEx",
-      Metamask: "metamask",
-      imToken: "imtoken",
       Wallet: "metamask",
     };
     return providerLogoList[getProvider()];
@@ -159,11 +156,11 @@ function Header(props) {
         onClick={onAddressClicked}
       >
         {account && account.address && (
-          <div
-            className={`${classes.accountIcon} ${
-              classes[renderProviderLogo()]
-            }`}
-          ></div>
+          <img
+            alt=""
+            className={classes.accountButtonImg}
+            src={prefix + "/connectors/logo_okex_32.png"}
+          />
         )}
         <Typography variant="h5">
           {account && account.address

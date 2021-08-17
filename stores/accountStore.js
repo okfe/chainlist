@@ -5,11 +5,19 @@ import {
   ACCOUNT_CONFIGURED,
   ACCOUNT_CHANGED,
   TRY_CONNECT_WALLET,
+  UPDATE_CONNECT_WALLET,
 } from "./constants";
 
 import stores from "./";
 
 import Web3 from "web3";
+import { whatBrowser } from "../utils";
+
+const pluginUrl = {
+  chrome:
+    "https://chrome.google.com/webstore/detail/okex-wallet/mcohilncbfahbmgdjkbpemcciiolgcge?hl=zh-CN",
+  firefox: "https://addons.mozilla.org/zh-CN/firefox/addon/okexwallet/",
+};
 
 class Store {
   constructor(dispatcher, emitter) {
@@ -30,8 +38,11 @@ class Store {
           case TRY_CONNECT_WALLET:
             this.tryConnectWallet(payload);
             break;
-          default: {
-          }
+          case UPDATE_CONNECT_WALLET:
+            this.configure();
+            break;
+          default:
+            break;
         }
       }.bind(this)
     );
@@ -47,28 +58,9 @@ class Store {
   }
 
   configure = async () => {
-    // if (window.ethereum) {
-    //   window.web3 = new Web3(ethereum);
-    //   try {
-    //     await ethereum.enable();
-    //     var accounts= await web3.eth.getAccounts();
-    //     this.setStore({ account: { address: accounts[0] }, web3: window.web3 })
-    //     this.emitter.emit(ACCOUNT_CONFIGURED)
-    //   } catch (error) {
-    //     // User denied account access...
-    //   }
-    //
-    //   this.updateAccount()
-    //
-    // } else if (window.web3) {
-    //   window.web3 = new Web3(web3.currentProvider);
-    //   // Acccounts always exposed
-    //   web3.eth.sendTransaction({/* ... */});
-    // }
-    // // Non-dapp browsers...
-    // else {
-    //   console.log('Non-Ethereum browser detected. You should consider trying MetaMask!');
-    // }
+    if (window.okexchain) {
+      await this.okexchainConnectWallet();
+    }
   };
 
   updateAccount = () => {
@@ -96,30 +88,33 @@ class Store {
     return new Web3(provider);
   };
 
-  tryConnectWallet = async () => {
-    if (window.okexchain) {
-      window.web3 = new Web3(okexchain);
-      try {
-        await okexchain.enable();
-        var accounts = await web3.eth.getAccounts();
-        this.setStore({ account: { address: accounts[0] }, web3: window.web3 });
-        this.emitter.emit(ACCOUNT_CONFIGURED);
-      } catch (error) {
-        // User denied account access...
-      }
-    }
-    // Legacy dapp browsers...
-    else if (window.web3) {
-      window.web3 = new Web3(web3.currentProvider);
+  okexchainConnectWallet = async () => {
+    window.web3 = new Web3(okexchain);
+    try {
+      await okexchain.enable();
       var accounts = await web3.eth.getAccounts();
       this.setStore({ account: { address: accounts[0] }, web3: window.web3 });
       this.emitter.emit(ACCOUNT_CONFIGURED);
+    } catch (error) {
+      // User denied account access...
+    }
+  };
+
+  tryConnectWallet = async () => {
+    if (window.okexchain) {
+      await this.okexchainConnectWallet();
     }
     // Non-dapp browsers...
     else {
       console.log(
-        "Non-Ethereum browser detected. You should consider trying MetaMask!"
+        `连接钱包失败，请先下载浏览器插件 ${pluginUrl[whatBrowser()]}`
       );
+      // alert("连接钱包失败，请先下载浏览器插件");
+      stores.emitter.emit(ERROR, "连接钱包失败，请先下载浏览器插件");
+      // 用户点击时执行
+      this.newTab = window.open("about:blank");
+      // 获取start_url成功后执行
+      this.newTab.location.href = pluginUrl[whatBrowser()];
     }
   };
 }

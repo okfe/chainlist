@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import Head from "next/head";
+import Web3 from "web3";
 import { useRouter } from "next/router";
 import styles from "../styles/Home.module.css";
 import {
@@ -29,6 +30,8 @@ import AddIcon from "@material-ui/icons/Add";
 import useSWR from "swr";
 
 import classes from "./index.module.css";
+import stores from "../stores";
+import { UPDATE_CONNECT_WALLET } from "../stores/constants";
 
 const searchTheme = createMuiTheme({
   palette: {
@@ -86,7 +89,7 @@ const fetcher = (...args) => fetch(...args).then((res) => res.json());
 
 function Home({ changeTheme, theme }) {
   const { data, error } = useSWR(
-    "https://chainid.network/chains.json",
+    "https://static.oklink.com/cdn/assets/okexchain/chainlist/chains.json",
     fetcher
   );
 
@@ -124,6 +127,19 @@ function Home({ changeTheme, theme }) {
     }
   }, []);
 
+  // 插件钱包切换账户时，对应的切换界面连接的账户
+  useEffect(() => {
+    const cb = async function (e) {
+      if (window.okexchain) {
+        stores.dispatcher.dispatch({ type: UPDATE_CONNECT_WALLET });
+      }
+    };
+    window.addEventListener("focus", cb);
+    return () => {
+      window.removeEventListener("focus", cb);
+    };
+  }, []);
+
   const resData = useMemo(() => {
     // 取前100个chainlist
     if (!data) return [];
@@ -150,7 +166,7 @@ function Home({ changeTheme, theme }) {
   return (
     <div className={styles.container}>
       <Head>
-        <title>Chainlist工具</title>
+        <title>OKEx Chainlist</title>
         <meta name="google" content="notranslate" />
         <link
           rel="shortcut icon"
@@ -233,25 +249,3 @@ function Home({ changeTheme, theme }) {
 }
 
 export default withTheme(Home);
-
-// export const getStaticProps  = async () => {
-//
-//   try {
-//     const chainsResponse = await fetch('https://chainid.network/chains.json')
-//     const chainsJson = await chainsResponse.json()
-//
-//     return {
-//       props: {
-//         chains: chainsJson
-//       },
-//       revalidate: 60,
-//     }
-//   } catch (ex) {
-//     return {
-//       props: {
-//         chains: []
-//       }
-//     }
-//   }
-//
-// }
